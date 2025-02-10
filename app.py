@@ -1,21 +1,23 @@
-import numpy as np
 import streamlit as st
-from toolkit.queries import query_users_trend
-from toolkit.utils import get_data_from_snowflake
-from toolkit.widgets import ( scatter_plot_yearly_unique_users, 
-    bar_plot_yearly_unique_users)
+from toolkit.queries import query_challenges
+from toolkit.utils import get_data_from_snowflake, human_format, force_display_all_rows
+
 
 # Configure the layout of the Streamlit app page
 st.set_page_config(layout="wide",
-                   page_title="My Streamlit App",
-                   page_icon=":bar_chart:",
-                   initial_sidebar_state="expanded")
+                page_title="Challenges on Synapse",
+                page_icon=":chart_with_upwards_trend:",
+                initial_sidebar_state="expanded")
 
 # Custom CSS for styling (Optional)
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # Add user interface elements to sidebar
+plot_options = ["Metrics", "Directory"]
+selected_option = st.sidebar.selectbox("Dashboard Page", plot_options)
+
+
 def footer_html() -> str:
     """HTML for a basic footer."""
     return """
@@ -111,4 +113,4 @@ def app(selected_option):
         
 
 if __name__ == "__main__":
-    app(selected_plot)
+    app(selected_option)
