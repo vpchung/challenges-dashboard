@@ -33,10 +33,8 @@ def app():
 
 def test_selectbox(app):
     """Ensure that the correct selections are available from the selectbox."""
-
     selectbox_options = app.selectbox[0].options
-
-    assert set(selectbox_options) == set(["Dataframe", "Line plot", "Bar plot"]), f"Incorrect selectbox options. Got {set(selectbox_options)}."
+    assert set(selectbox_options) == set(["Directory", "Metrics"]), f"Incorrect selectbox options. Got {set(selectbox_options)}."
 
 def test_outputs(app):
     """Ensure that the selectbox selections return outputs."""
@@ -47,3 +45,4 @@ def test_outputs(app):
     for option in selectbox_options:
         output = app.selectbox[0].set_value(option).run()
         assert output is not None
+
