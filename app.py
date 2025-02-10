@@ -16,8 +16,15 @@ with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # Add user interface elements to sidebar
-plot_options = ["Dataframe", "Line plot", "Bar plot"]
-selected_plot = st.sidebar.selectbox("Choose a plot type", plot_options)
+def footer_html() -> str:
+    """HTML for a basic footer."""
+    return """
+        <div class='footer'>
+            © 2025 <br/>
+            <i>Powered by Sage Bionetworks</i></p>
+        </div>
+    """
+
 
 def app(selected_option):
     st.markdown("# Challenges on Synapse")
@@ -98,6 +105,9 @@ def app(selected_option):
             }
         )
 
+    # 4. Basic footer
+    # -------------------------------------------------------------------------
+    st.markdown(footer_html(), unsafe_allow_html=True)
         
 
 if __name__ == "__main__":
