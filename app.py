@@ -19,37 +19,85 @@ with open("style.css") as f:
 plot_options = ["Dataframe", "Line plot", "Bar plot"]
 selected_plot = st.sidebar.selectbox("Choose a plot type", plot_options)
 
-def app(selected_plot):
+def app(selected_option):
+    st.markdown("# Challenges on Synapse")
 
     # 1. Retrieve the data using your queries in queries.py
     # -------------------------------------------------------------------------
-    users_trend_df = get_data_from_snowflake(query_users_trend())
+    challenges = get_data_from_snowflake(query_challenges())
 
-    # 2. Display the data using widgets in widgets.py
+    # Create new column for hyperlinks
+    challenges["Link"] = "https://www.synapse.org/Synapse:syn" + challenges["PROJECT_ID"].astype(str)
+
+    # Create new column for challenge year (assuming YEAR(creation_date) is the start year)
+    challenges["Year"] = challenges["DATE"].astype(str).str.split("-", expand=True)[0]
+    challenges_by_year = challenges.groupby("Year").size().reset_index(name="Number of Challenges")
+
+
+    # 2. Get general metrics and delta numbers
+    num_challenges = len(challenges)
+    delta_challenges = challenges_by_year["Number of Challenges"].diff().iloc[-1]
+
+    delta_participants = 8_100
+    delta_submissions = 65_420
+
+
+    # 3. Display the data
     # -------------------------------------------------------------------------
+    st.markdown(f"#### {selected_option}")
 
-    if selected_plot == "Dataframe":
-        st.markdown("### User Growth Dataframe\nHere we display the cumulative growth of unique users over the years in a straight-forward dataframe. Each row represents the total number of users up to and including that year, allowing you to see how user account creation has increased over time.")
-        st.dataframe(users_trend_df,
-                     hide_index=True,
-                     width=600,
-                     column_config={
-                        "QUERY_YEAR": st.column_config.TextColumn(
-                            "Year",
-                        ),
-                        "CUMULATIVE_USERS": st.column_config.TextColumn(
-                            "Total Users"
-                        )
-                        }
-                    )
+    if selected_option == "Metrics":
+        col1, col2, col3 = st.columns(3)
+        col1.metric(
+            "Challenges",
+            num_challenges,
+            int(delta_challenges))
+        col2.metric(
+            "Participants",
+            human_format(delta_participants),
+            "5%")
+        col3.metric(
+            "Submissions",
+            human_format(delta_submissions))
+        
+        st.markdown("#### Challenges By Year")
+        st.dataframe(
+            challenges_by_year.sort_values("Year", ascending=False),
+            hide_index=True,
+            use_container_width=True,
+            height = force_display_all_rows(challenges_by_year),
+            column_config={
+                "QUERY_YEAR": st.column_config.TextColumn("Year"),
+                "CUMULATIVE_USERS": st.column_config.TextColumn("Total Users")
+            }
+        )
+        st.bar_chart(
+            challenges_by_year.sort_values("Year", ascending=False),
+            x="Year",
+            y="Number of Challenges",
+            color="#38756a"
+        )
 
-    if selected_plot == "Line plot":
-        st.markdown("### Yearly User Growth Trend\nThis line plot illustrates the growth trend of unique users over the years. The dots on the line represent the total number of users up to the end of each year, providing a clear view of how user growth has progressed over time.")
-        st.plotly_chart(scatter_plot_yearly_unique_users(users_trend_df))
+    if selected_option == "Directory":
+        # Add filter to sidebar
+        year_filter = st.sidebar.multiselect("Filter by Year(s)", challenges_by_year["Year"].sort_values(ascending=False).tolist())
 
-    if selected_plot == "Bar plot":
-        st.markdown("### Yearly User Growth with Percentage of Total\nThis bar plot shows the cumulative number of unique users up to the end of each year. The overlaid line indicates the percentage of total users achieved by that year, giving you a sense of growth relative to the overall total.")
-        st.plotly_chart(bar_plot_yearly_unique_users(users_trend_df))
+
+        filtered_challenges = challenges[["Year", "NAME", "Link", "PROJECT_CREATOR"]]
+        if len(year_filter):
+            filtered_challenges = filtered_challenges.loc[filtered_challenges["Year"].isin(year_filter)]
+        st.dataframe(
+            filtered_challenges,
+            hide_index=True,
+            use_container_width=True,
+            height=force_display_all_rows(filtered_challenges),
+            column_config={
+                "NAME": st.column_config.TextColumn("Challenge Name"),
+                "Link": st.column_config.LinkColumn(),
+                "PROJECT_CREATOR": st.column_config.TextColumn("Synapse Point-of-Contact"),
+            }
+        )
+
         
 
 if __name__ == "__main__":
