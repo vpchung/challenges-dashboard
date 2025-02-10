@@ -1,3 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+html, body, div, p, 
+h1, h2, h3, [class*="css"] { 
+  font-family: "DM Sans", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
 /* Logo */
 /* Adapted from Zachary Blackwood */
 /* [data-testid="stSidebar"] {
@@ -10,15 +19,14 @@
 
 /* Card */
 /* Adapted from https://startbootstrap.com/theme/sb-admin-2 */
-div.css-1r6slb0.e1tzin5v2 {
-    background-color: #FFFFFF;
+div.st-emotion-cache-1r6slb0 {
+    background-color: #FFF;
     border: 1px solid #CCCCCC;
     padding: 5% 5% 5% 10%;
     border-radius: 5px;
     
-    border-left: 0.5rem solid #9AD8E1 !important;
+    border-left: 0.5rem solid #dae9e7 !important;
     box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
-    
 }
 
 label.css-mkogse.e16fv1kl2 {
@@ -49,4 +57,15 @@ footer.css-12gp8ed.eknhn3m4 {
 
 div.vg-tooltip-element {
   display: none;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 15px 0;
+  background-color: #172430;
+  color: #FFF;
+  text-align: center;
 }
