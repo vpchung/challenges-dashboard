@@ -32,15 +32,17 @@ def app():
     ).run()
 
 
-def test_app_with_navigation(app):
-    assert app.markdown[1].value == "### Dashboard"
+# NOTE: Testing the app with navigation is currently not possible;
+#       related GitHub issue here: https://github.com/streamlit/streamlit/issues/9446
+# def test_app_with_navigation(app):
+#     assert app.markdown[1].value == "### Dashboard"
 
 
-def test_switch_page_with_navigation(app):
-    assert app.markdown[1].value == "### Dashboard"
-    
-    app.switch_page("pages/directory_list.py")
-    assert app.markdown[1].value == "### Directory of Challenges"
+# def test_switch_page_with_navigation(app):
+#     assert app.markdown[1].value == "### Dashboard"
 
-    app.switch_page("pages/download_counts.py")
-    assert app.markdown[1].value == "### Data Download Counts"
+#     app.switch_page("pages/directory_list.py")
+#     assert app.markdown[1].value == "### Directory of Challenges"
+
+#     app.switch_page("pages/download_counts.py")
+#     assert app.markdown[1].value == "### Data Download Counts"
