@@ -29,6 +29,20 @@ def query_challenges():
     """
 
 
+def query_challenge_info(syn_id):
+    syn_id = re.search(r"^(syn)?(\d{1,8})$", syn_id).group(2)
+    return f"""
+    SELECT
+        name
+    FROM
+        synapse_data_warehouse.synapse.node_latest
+    WHERE
+        project_id = {syn_id} AND
+        node_type = 'project'
+    LIMIT 1
+    """
+
+
 def query_data_download_counts(syn_id):
     """Return the number of data downloads for a given challenge."""
 
@@ -45,6 +59,7 @@ def query_data_download_counts(syn_id):
             project_id = {syn_id} AND
             node_type = 'file' AND
             name NOT LIKE '%_logs.zip' AND
+            name NOT LIKE '%_log.txt' AND
             name NOT LIKE '%_docker.log' AND
             name NOT LIKE '%predictions.%' AND
             name NOT LIKE 'mlcube.yaml' AND
