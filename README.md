@@ -1,6 +1,6 @@
 ## Challenges on Synapse
 
-Proof-of-concept dashboard for displaying challenge metrics
+Proof-of-concept dashboard for displaying challenge metrics and download counts.
 
 ## Kudos 🍻
 
