@@ -32,7 +32,7 @@ def query_challenges():
 def query_data_download_counts(syn_id):
     """Return the number of data downloads for a given challenge."""
 
-    syn_id = re.search(r"^[a-z:]*(\d{8})$", syn_id).group(1)
+    syn_id = re.search(r"^(syn)?(\d{1,8})$", syn_id).group(2)
     return f"""
     WITH challenge_files AS (
         SELECT
