@@ -3,6 +3,8 @@ import streamlit as st
 from toolkit.queries import query_challenges
 from toolkit.utils import force_display_all_rows, get_data_from_snowflake, human_format
 
+# DATA
+# ------------------------------------------------------------------------
 challenges = get_data_from_snowflake(query_challenges())
 challenges["Year"] = challenges["DATE"].astype(str).str.split("-", expand=True)[0]
 st.session_state["challenges"] = challenges
@@ -11,13 +13,20 @@ challenges_by_year = (
     challenges.groupby("Year").size().reset_index(name="Number of Challenges")
 )
 
-# Get general metrics and delta numbers
+# Get general metrics and delta numbers for:
+#   - challenges
+#   - participants
+#   - submissions
 num_challenges = len(challenges)
 delta_challenges = challenges_by_year["Number of Challenges"].diff().iloc[-1]
-
 delta_participants = 8_100
 delta_submissions = 65_420
 
+
+# APP
+# ------------------------------------------------------------------------
+
+# Section: general metrics
 st.markdown("### Dashboard")
 col1, col2, col3 = st.columns(3)
 col1.metric("Challenges", num_challenges, int(delta_challenges))
@@ -26,6 +35,7 @@ col3.metric("Submissions", human_format(delta_submissions))
 
 st.divider()
 
+# Section: Plot + table of challenges by year
 st.markdown("##### Challenges By Year")
 chart, table = st.columns([3, 1])
 chart.bar_chart(

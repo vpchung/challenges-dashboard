@@ -4,6 +4,8 @@ import streamlit as st
 from toolkit.queries import query_challenges
 from toolkit.utils import force_display_all_rows, get_data_from_snowflake
 
+# DATA
+# ------------------------------------------------------------------------
 if "challenges" in st.session_state:
     challenges = st.session_state["challenges"]
 else:
@@ -15,8 +17,11 @@ challenges["Link"] = "https://www.synapse.org/Synapse:syn" + challenges[
     "PROJECT_ID"
 ].astype(str)
 
-st.markdown("### Directory of Challenges")
 
+# APP
+# ------------------------------------------------------------------------
+
+st.markdown("### Directory of Challenges")
 
 year_filter = st.multiselect(
     "Filter by Year(s)",
@@ -27,7 +32,7 @@ if len(year_filter):
     filtered_challenges = filtered_challenges.loc[
         filtered_challenges["Year"].isin(year_filter)
     ]
-    
+
 st.dataframe(
     filtered_challenges,
     hide_index=True,

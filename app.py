@@ -23,7 +23,7 @@ with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 pg = st.navigation([
-    st.Page("pages/metrics.py", title="Home"),
+    st.Page("pages/metrics.py", title="Home"),  # landing page
     st.Page("pages/directory_list.py", title="Directory List"),
     st.Page("pages/download_counts.py", title="Data Download Counts")
 ])
