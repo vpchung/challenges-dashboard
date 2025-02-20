@@ -27,7 +27,7 @@ delta_submissions = 65_420
 # ------------------------------------------------------------------------
 
 # Section: general metrics
-st.markdown("### Dashboard")
+st.subheader("Dashboard")
 col1, col2, col3 = st.columns(3)
 col1.metric("Challenges", num_challenges, int(delta_challenges))
 col2.metric("Participants", human_format(delta_participants), "5%")

@@ -21,10 +21,12 @@ challenges["Link"] = "https://www.synapse.org/Synapse:syn" + challenges[
 # APP
 # ------------------------------------------------------------------------
 
-st.markdown("### Directory of Challenges")
+st.subheader("Directory List")
+st.markdown("List of Challenges found on Synapse.")
+st.caption(":orange[⚠️ This list may not be fully accurate and could include projects that are not Challenges.]")
 
 year_filter = st.multiselect(
-    "Filter by Year(s)",
+    "**Filter by Year(s)**",
     challenges["Year"].sort_values(ascending=False).drop_duplicates().tolist(),
 )
 filtered_challenges = challenges[["Year", "NAME", "Link", "PROJECT_CREATOR"]]
