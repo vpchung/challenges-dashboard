@@ -1,28 +1,30 @@
 import streamlit as st
-from toolkit.queries import query_challenges
-from toolkit.utils import get_data_from_snowflake, human_format, force_display_all_rows
 
+from toolkit.queries import query_challenges, query_data_download_counts
+from toolkit.utils import force_display_all_rows, get_data_from_snowflake, human_format
 
 # Configure the layout of the Streamlit app page
-st.set_page_config(layout="wide",
-                page_title="Challenges on Synapse",
-                page_icon=":chart_with_upwards_trend:",
-                initial_sidebar_state="expanded")
+st.set_page_config(
+    layout="wide",
+    page_title="Challenges on Synapse",
+    page_icon=":chart_with_upwards_trend:",
+    initial_sidebar_state="expanded",
+)
 
 # Custom CSS for styling (Optional)
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # Add user interface elements to sidebar
-plot_options = ["Metrics", "Directory"]
-selected_option = st.sidebar.selectbox("Dashboard Page", plot_options)
+PLOT_OPTIONS = ["Metrics", "Directory", "Data Downloads"]
+SELECTED_OPTION = st.sidebar.selectbox("Dashboard Page", PLOT_OPTIONS)
 
 
 def footer_html() -> str:
     """HTML for a basic footer."""
     return """
         <div class='footer'>
-            © 2025 <br/>
+            © 2025, Challenges & Benchmarking <br/>
             <i>Powered by Sage Bionetworks</i></p>
         </div>
     """
@@ -36,12 +38,15 @@ def app(selected_option):
     challenges = get_data_from_snowflake(query_challenges())
 
     # Create new column for hyperlinks
-    challenges["Link"] = "https://www.synapse.org/Synapse:syn" + challenges["PROJECT_ID"].astype(str)
+    challenges["Link"] = "https://www.synapse.org/Synapse:syn" + challenges[
+        "PROJECT_ID"
+    ].astype(str)
 
     # Create new column for challenge year (assuming YEAR(creation_date) is the start year)
     challenges["Year"] = challenges["DATE"].astype(str).str.split("-", expand=True)[0]
-    challenges_by_year = challenges.groupby("Year").size().reset_index(name="Number of Challenges")
-
+    challenges_by_year = (
+        challenges.groupby("Year").size().reset_index(name="Number of Challenges")
+    )
 
     # 2. Get general metrics and delta numbers
     num_challenges = len(challenges)
@@ -50,51 +55,46 @@ def app(selected_option):
     delta_participants = 8_100
     delta_submissions = 65_420
 
-
     # 3. Display the data
     # -------------------------------------------------------------------------
     st.markdown(f"#### {selected_option}")
 
     if selected_option == "Metrics":
         col1, col2, col3 = st.columns(3)
-        col1.metric(
-            "Challenges",
-            num_challenges,
-            int(delta_challenges))
-        col2.metric(
-            "Participants",
-            human_format(delta_participants),
-            "5%")
-        col3.metric(
-            "Submissions",
-            human_format(delta_submissions))
-        
+        col1.metric("Challenges", num_challenges, int(delta_challenges))
+        col2.metric("Participants", human_format(delta_participants), "5%")
+        col3.metric("Submissions", human_format(delta_submissions))
+
         st.markdown("#### Challenges By Year")
         st.dataframe(
             challenges_by_year.sort_values("Year", ascending=False),
             hide_index=True,
             use_container_width=True,
-            height = force_display_all_rows(challenges_by_year),
+            height=force_display_all_rows(challenges_by_year),
             column_config={
                 "QUERY_YEAR": st.column_config.TextColumn("Year"),
-                "CUMULATIVE_USERS": st.column_config.TextColumn("Total Users")
-            }
+                "CUMULATIVE_USERS": st.column_config.TextColumn("Total Users"),
+            },
         )
         st.bar_chart(
             challenges_by_year.sort_values("Year", ascending=False),
             x="Year",
             y="Number of Challenges",
-            color="#38756a"
+            color="#38756a",
         )
 
     if selected_option == "Directory":
         # Add filter to sidebar
-        year_filter = st.sidebar.multiselect("Filter by Year(s)", challenges_by_year["Year"].sort_values(ascending=False).tolist())
-
+        year_filter = st.sidebar.multiselect(
+            "Filter by Year(s)",
+            challenges_by_year["Year"].sort_values(ascending=False).tolist(),
+        )
 
         filtered_challenges = challenges[["Year", "NAME", "Link", "PROJECT_CREATOR"]]
         if len(year_filter):
-            filtered_challenges = filtered_challenges.loc[filtered_challenges["Year"].isin(year_filter)]
+            filtered_challenges = filtered_challenges.loc[
+                filtered_challenges["Year"].isin(year_filter)
+            ]
         st.dataframe(
             filtered_challenges,
             hide_index=True,
@@ -103,8 +103,10 @@ def app(selected_option):
             column_config={
                 "NAME": st.column_config.TextColumn("Challenge Name"),
                 "Link": st.column_config.LinkColumn(),
-                "PROJECT_CREATOR": st.column_config.TextColumn("Synapse Point-of-Contact"),
-            }
+                "PROJECT_CREATOR": st.column_config.TextColumn(
+                    "Synapse Point-of-Contact"
+                ),
+            },
         )
 
     if selected_option == "Data Downloads":
@@ -144,7 +146,7 @@ def app(selected_option):
     # 4. Basic footer
     # -------------------------------------------------------------------------
     st.markdown(footer_html(), unsafe_allow_html=True)
-        
+
 
 if __name__ == "__main__":
-    app(selected_option)
+    app(SELECTED_OPTION)
