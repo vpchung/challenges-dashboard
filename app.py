@@ -27,7 +27,6 @@ pg = st.navigation([
     st.Page("pages/directory_list.py", title="Directory List"),
     st.Page("pages/download_counts.py", title="Data Download Counts")
 ])
-
 pg.run()
 
 st.markdown(footer_html(), unsafe_allow_html=True)

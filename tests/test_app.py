@@ -31,18 +31,16 @@ def app():
         "app.py", default_timeout=DEFAULT_TIMEOUT
     ).run()
 
-def test_selectbox(app):
-    """Ensure that the correct selections are available from the selectbox."""
-    selectbox_options = app.selectbox[0].options
-    assert set(selectbox_options) == set(["Directory", "Metrics"]), f"Incorrect selectbox options. Got {set(selectbox_options)}."
 
-def test_outputs(app):
-    """Ensure that the selectbox selections return outputs."""
+def test_app_with_navigation(app):
+    assert app.markdown[1].value == "### Dashboard"
 
-    # get selectbox options
-    selectbox_options = app.selectbox[0].options
 
-    for option in selectbox_options:
-        output = app.selectbox[0].set_value(option).run()
-        assert output is not None
+def test_switch_page_with_navigation(app):
+    assert app.markdown[1].value == "### Dashboard"
+    
+    app.switch_page("pages/directory_list.py")
+    assert app.markdown[1].value == "### Directory of Challenges"
 
+    app.switch_page("pages/download_counts.py")
+    assert app.markdown[1].value == "### Data Download Counts"
