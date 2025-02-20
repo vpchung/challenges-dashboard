@@ -24,18 +24,20 @@ col1.metric("Challenges", num_challenges, int(delta_challenges))
 col2.metric("Participants", human_format(delta_participants), "5%")
 col3.metric("Submissions", human_format(delta_submissions))
 
+st.divider()
+
 st.markdown("##### Challenges By Year")
-st.bar_chart(
+chart, table = st.columns([3, 1])
+chart.bar_chart(
     challenges_by_year.sort_values("Year", ascending=False),
     x="Year",
     y="Number of Challenges",
+    height=force_display_all_rows(challenges_by_year),
     color="#38756a",
 )
-
-st.dataframe(
+table.dataframe(
     challenges_by_year.sort_values("Year", ascending=False),
     hide_index=True,
-    use_container_width=True,
     height=force_display_all_rows(challenges_by_year),
     column_config={
         "QUERY_YEAR": st.column_config.TextColumn("Year"),
