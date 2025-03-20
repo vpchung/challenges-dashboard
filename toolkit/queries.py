@@ -1,7 +1,11 @@
 import re
 
 def query_challenges():
-    """Return the total number of newly-created user accounts in Synapse for each year."""
+    """Return a list of challenges.
+    
+    Currently using 'Challenge' in the project name to signify as a challenge
+    (not most accurate though). Waiting on support to query Challenge objects.
+    """
 
     return """
     WITH syn_users AS (
